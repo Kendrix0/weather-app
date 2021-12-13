@@ -1,4 +1,8 @@
 import './style.css';
-import { geocodeByName } from './apiFunctions';
+import { geocodeByName, oneCallWeather } from './apiFunctions';
 
-geocodeByName('Bryant');
+let formatSearchQuery = () => {
+
+}
+
+oneCallWeather('imperial','Little+Rock');
