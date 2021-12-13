@@ -5,4 +5,12 @@ let formatSearchQuery = () => {
 
 }
 
-oneCallWeather('imperial','Little+Rock');
+let convertToCelsius = () => {
+
+}
+
+let convertToFahrenheit = () => {
+    
+}
+
+oneCallWeather('Little+Rock');
