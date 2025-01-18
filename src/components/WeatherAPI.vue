@@ -1,3 +1,4 @@
+<script setup>
 /* API REQUEST FORMAT
 
 https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/[location]/[date1]/[date2]?key=YOUR_API_KEY 
@@ -10,7 +11,7 @@ current – current conditions or conditions at requested time
 
 */
 
-export let requestWeatherData = async function(location, date1, date2, key) {
+let requestWeatherData = async function (location, date1, date2, key) {
     try {
         let response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${date1}/${date2}?key=${key}`);
         let weatherData = response.json();
@@ -19,3 +20,15 @@ export let requestWeatherData = async function(location, date1, date2, key) {
         console.log(e)
     }
 }
+</script>
+
+<template>
+    <menu>
+
+    </menu>
+    <div>
+        <button @click="requestWeatherData"></button>
+    </div>
+</template>
+
+<style></style>
