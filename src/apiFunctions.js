@@ -1,5 +1,15 @@
-const apiKey = process.env.OPENWEATHER_KEY;
+/* API REQUEST FORMAT
 
+https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/[location]/[date1]/[date2]?key=YOUR_API_KEY 
+
+&include=,,
+days – daily data
+hours – hourly data
+alerts – weather alerts
+current – current conditions or conditions at requested time
+
+*/
+/*
 export let geocodeByName = async function(cityName, stateCode, countryCode, limit=1) {
     let response = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName},${stateCode},${countryCode}&limit=${limit}&appid=${apiKey}`);
     let geoData = await response.json();
@@ -16,5 +26,15 @@ export let oneCallWeather = async function(units, cityName, stateCode='', countr
         return weatherData;
     } catch(e) {
         console.log('Error!', e);
+    }
+}
+*/
+export let requestWeatherData = async function(location, date1, date2, key) {
+    try {
+        let response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${date1}/${date2}?key=${key}`);
+        let weatherData = response.json();
+        return weatherData;
+    } catch (e) {
+        console.log(e)
     }
 }
