@@ -1,8 +1,19 @@
+<script type="module">
+import { createApp, ref } from 'vue'
+</script>
 <script setup>
-/* API REQUEST FORMAT
+const location = ref('');
+const weatherData = ref('');
+const days = ref([]);
+const APIkey = ref('FMNUWVMF27AJNG8P9WAECF8RS');
 
-https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/[location]/[date1]/[date2]?key=YOUR_API_KEY 
+let startDate = new Date();
+let endDate = new Date();
 
+endDate = endDate.setDate(endDate.getDate() + 9);
+startDate = startDate.toISOString().substring(0, 10);
+endDate = new Date(endDate).toISOString().substring(0, 10);
+/*
 &include=,,
 days – daily data
 hours – hourly data
@@ -11,13 +22,15 @@ current – current conditions or conditions at requested time
 
 */
 
-let requestWeatherData = async function (location, date1, date2, key) {
+async function requestWeatherData() {
     try {
-        let response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${date1}/${date2}?key=${key}`);
-        let weatherData = response.json();
-        return weatherData;
-    } catch (e) {
-        console.log(e)
+        let response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location.value}/${startDate}/${endDate}?key=${APIkey.value}`);
+        weatherData.value = await response.json();
+        for (let day of weatherData.value.days) {
+            days.value.push(day);
+        }
+    } catch (err) {
+        console.log(err)
     }
 }
 </script>
@@ -27,7 +40,10 @@ let requestWeatherData = async function (location, date1, date2, key) {
 
     </menu>
     <div>
-        <button @click="requestWeatherData"></button>
+        <div>
+            <input type="text" placeholder="Location" v-model="location">
+            <button @click="requestWeatherData">Submit</button>
+        </div>
     </div>
 </template>
 
