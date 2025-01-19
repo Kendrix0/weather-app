@@ -4,12 +4,13 @@ import { createApp, ref } from 'vue'
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
 import WeatherSummary from './components/WeatherSummary.vue'
+import CurrentDay from './components/CurrentDay.vue'
 
 const location = ref('');
 const weatherData = ref('');
-const days = ref([]);
 const APIkey = ref('FMNUWVMF27AJNG8P9WAECF8RS');
-
+const days = ref([]);
+const dataPresent = ref(false)
 let startDate = new Date();
 let endDate = new Date();
 
@@ -21,9 +22,12 @@ async function requestWeatherData() {
   try {
     let response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location.value}/${startDate}/${endDate}?key=${APIkey.value}`);
     weatherData.value = await response.json();
+    days.value = [];
     for (let day of weatherData.value.days) {
       days.value.push(day);
     }
+    dataPresent.value = !dataPresent.value;
+    console.log(days.value[0])
   } catch (err) {
     console.log(err)
   }
@@ -34,9 +38,9 @@ async function requestWeatherData() {
   <header>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
+    <button>Current Weather</button>
+    <button>10-Day Forecast</button>
+    <button>Radar</button>
   </header>
 
   <main>
@@ -46,7 +50,8 @@ async function requestWeatherData() {
         <button @click="requestWeatherData">Submit</button>
       </div>
     </div>
-    <WeatherSummary :days />
+    <CurrentDay v-if="dataPresent" :days />
+    <WeatherSummary v-if="dataPresent" :days />
   </main>
 </template>
 
