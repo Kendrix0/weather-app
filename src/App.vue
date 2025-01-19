@@ -1,8 +1,7 @@
 <script type="module">
-import { createApp, ref } from 'vue'
+import { ref } from 'vue'
 </script>
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
 import WeatherSummary from './components/WeatherSummary.vue'
 import CurrentDay from './components/CurrentDay.vue'
 
@@ -10,7 +9,8 @@ const location = ref('');
 const weatherData = ref('');
 const APIkey = ref('FMNUWVMF27AJNG8P9WAECF8RS');
 const days = ref([]);
-const dataPresent = ref(false)
+const dataPresent = ref(false);
+const displayedComp = ref('');
 let startDate = new Date();
 let endDate = new Date();
 
@@ -32,14 +32,18 @@ async function requestWeatherData() {
     console.log(err)
   }
 }
+
+function setActiveComp(comp) {
+  displayedComp.value = comp
+}
 </script>
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
 
-    <button>Current Weather</button>
-    <button>10-Day Forecast</button>
+    <button @click="setActiveComp('current')">Current Weather</button>
+    <button @click="setActiveComp('tenDay')">10-Day Forecast</button>
     <button>Radar</button>
   </header>
 
@@ -50,8 +54,8 @@ async function requestWeatherData() {
         <button @click="requestWeatherData">Submit</button>
       </div>
     </div>
-    <CurrentDay v-if="dataPresent" :days />
-    <WeatherSummary v-if="dataPresent" :days />
+    <CurrentDay v-if="displayedComp=='current'" :days />
+    <WeatherSummary v-if="displayedComp=='tenDay'" :days />
   </main>
 </template>
 
