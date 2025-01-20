@@ -36,6 +36,7 @@ async function requestWeatherData() {
 function setActiveComp(comp) {
   displayedComp.value = comp
 }
+
 </script>
 
 <template>
