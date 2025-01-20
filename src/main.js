@@ -12,6 +12,7 @@ import App from './App.vue'
 
 // Composables
 import { createApp } from 'vue'
+import 'vuetify/dist/vuetify.min.css'
 
 const app = createApp(App)
 

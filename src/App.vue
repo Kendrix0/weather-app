@@ -3,30 +3,31 @@ import { ref } from 'vue'
 </script>
 <script setup>
 import WeatherSummary from './components/WeatherSummary.vue'
-import CurrentDay from './components/CurrentDay.vue'
 
-const location = ref('');
-const weatherData = ref('');
-const APIkey = ref('FMNUWVMF27AJNG8P9WAECF8RS');
-const days = ref([]);
-const dataPresent = ref(false);
-const displayedComp = ref('');
-let startDate = new Date();
-let endDate = new Date();
+const location = ref('')
+const weatherData = ref('')
+const APIkey = ref('FMNUWVMF27AJNG8P9WAECF8RS')
+const days = ref([])
+const dataPresent = ref(false)
+const displayedComp = ref('')
+let startDate = new Date()
+let endDate = new Date()
 
-endDate = endDate.setDate(endDate.getDate() + 9);
-startDate = startDate.toISOString().substring(0, 10);
-endDate = new Date(endDate).toISOString().substring(0, 10);
+endDate = endDate.setDate(endDate.getDate() + 9)
+startDate = startDate.toISOString().substring(0, 10)
+endDate = new Date(endDate).toISOString().substring(0, 10)
 
 async function requestWeatherData() {
   try {
-    let response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location.value}/${startDate}/${endDate}?key=${APIkey.value}`);
-    weatherData.value = await response.json();
-    days.value = [];
+    let response = await fetch(
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location.value}/${startDate}/${endDate}?key=${APIkey.value}`
+    )
+    weatherData.value = await response.json()
+    days.value = []
     for (let day of weatherData.value.days) {
-      days.value.push(day);
+      days.value.push(day)
     }
-    dataPresent.value = !dataPresent.value;
+    dataPresent.value = !dataPresent.value
     console.log(days.value[0])
   } catch (err) {
     console.log(err)
@@ -36,14 +37,11 @@ async function requestWeatherData() {
 function setActiveComp(comp) {
   displayedComp.value = comp
 }
-
 </script>
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <button @click="setActiveComp('current')">Current Weather</button>
     <button @click="setActiveComp('tenDay')">10-Day Forecast</button>
     <button>Radar</button>
   </header>
@@ -51,12 +49,11 @@ function setActiveComp(comp) {
   <main>
     <div>
       <div>
-        <input type="text" placeholder="Location" v-model="location">
+        <input type="text" placeholder="Location" v-model="location" />
         <button @click="requestWeatherData">Submit</button>
       </div>
     </div>
-    <CurrentDay v-if="displayedComp=='current'" :days />
-    <WeatherSummary v-if="displayedComp=='tenDay'" :days />
+    <WeatherSummary v-if="dataPresent" :days />
   </main>
 </template>
 
