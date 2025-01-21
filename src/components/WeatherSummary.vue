@@ -5,13 +5,16 @@ const props = defineProps({
 });
 
 const weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; 
+const weekdayFull = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 </script>
 
 <template>
-  <h1>10-DAY FORECAST</h1>
   <div class="v-container v-locale--is-ltr">
+    <div class="v-row">
+      <h1>10-DAY FORECAST</h1>
+    </div>
       <div class="v-row">
-        <div class="v-col v-col-2">
+        <div class="v-col v-col-3">
           <div class="v-sheet v-theme--light rounded-lg">
             <div
               class="v-list v-theme--light v-list--density-default v-list--one-line rounded-lg"
@@ -25,15 +28,20 @@ const weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
                 <span class="v-list-item__overlay"></span>
                 <span class="v-list-item__underlay"></span>
                 <div class="v-list-item__content" data-no-activator="">
-                  <div class="v-list-item-title">{{ weekday[(new Date(day.datetime)).getDay()] }}:</div>
+                  <div class="v-list-item-title">{{ day == days[0] ? "Today" : weekday[(new Date(day.datetime)).getDay()] }}: {{ day.tempmin }} - {{ day.tempmax }}</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
           <div class="v-col">
-            {{ days[0] }}
-          <div class="v-sheet v-theme--light rounded-lg" style="min-height: 70vh"></div>
+          <div class="v-sheet v-theme--light rounded-lg" style="min-height: 70vh">
+            <div>{{ weekdayFull[(new Date(days[0].datetime)).getDay()] }}</div>
+            <div>Currently: {{ days[0].temp }}</div>
+            <div>{{ days[0].conditions }}</div>
+            <div>High: {{ days[0].tempmax }} Low: {{ days[0].tempmin }}</div>
+            <div></div>
+          </div>
         </div>
       </div>
     </div>
