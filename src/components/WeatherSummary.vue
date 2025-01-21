@@ -32,6 +32,7 @@ const weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
           </div>
         </div>
           <div class="v-col">
+            {{ days[0] }}
           <div class="v-sheet v-theme--light rounded-lg" style="min-height: 70vh"></div>
         </div>
       </div>

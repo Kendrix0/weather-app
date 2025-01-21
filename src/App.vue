@@ -8,6 +8,7 @@ const location = ref('')
 const weatherData = ref('')
 const APIkey = ref('FMNUWVMF27AJNG8P9WAECF8RS')
 const days = ref([])
+
 const dataPresent = ref(false)
 const displayedComp = ref('')
 let startDate = new Date()
@@ -27,7 +28,7 @@ async function requestWeatherData() {
     for (let day of weatherData.value.days) {
       days.value.push(day)
     }
-    dataPresent.value = !dataPresent.value
+    dataPresent.value = !!days.value
     console.log(days.value[0])
   } catch (err) {
     console.log(err)
@@ -36,23 +37,26 @@ async function requestWeatherData() {
 
 function setActiveComp(comp) {
   displayedComp.value = comp
+  console.log(`Set ${comp}!`)
 }
 </script>
 
 <template>
-  <header>
+  <header class="d-flex justify-center">
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-    <button @click="setActiveComp('tenDay')">10-Day Forecast</button>
-    <button>Radar</button>
-  </header>
-
-  <main>
-    <div>
-      <div>
-        <input type="text" placeholder="Location" v-model="location" />
-        <button @click="requestWeatherData">Submit</button>
-      </div>
+    <div >
+      <v-combobox
+  label="Enter Location"
+  :items="['Athens', 'Dallas', 'Little Rock', 'Madrid', 'Philadelphia']"
+  variant="outlined"
+  width="25vw"
+  v-model="location"
+></v-combobox>
+      <button @click="requestWeatherData">Submit</button>
     </div>
+  </header>
+  <main>
+    <div></div>
     <WeatherSummary v-if="dataPresent" :days />
   </main>
 </template>
