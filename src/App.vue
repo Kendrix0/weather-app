@@ -8,7 +8,7 @@ const location = ref('')
 const weatherData = ref('')
 const APIkey = ref('FMNUWVMF27AJNG8P9WAECF8RS')
 const days = ref([])
-
+const currentConditions = ref({})
 const dataPresent = ref(false)
 const displayedComp = ref('')
 let startDate = new Date()
@@ -21,27 +21,21 @@ endDate = new Date(endDate).toISOString().substring(0, 10)
 async function requestWeatherData() {
   try {
     let response = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location.value}/${startDate}/${endDate}?key=${APIkey.value}`
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location.value}/${startDate}/${endDate}?key=${APIkey.value}&include=current`
     )
     weatherData.value = await response.json()
-    days.value = []
-    for (let day of weatherData.value.days) {
-      days.value.push(day)
-    }
+    currentConditions.value = weatherData.value.currentConditions;
+    days.value = weatherData.value.days
+    console.log(weatherData.value)
     dataPresent.value = !!days.value
-    console.log(days.value[0])
   } catch (err) {
     console.log(err)
   }
 }
-
-function setActiveComp(comp) {
-  displayedComp.value = comp
-  console.log(`Set ${comp}!`)
-}
 </script>
 
 <template>
+<div class="h-screen d-flex flex-column justify-center">
   <header class="d-flex justify-center align-center mt-10">
     <div class="d-flex ga-md-2">
       <v-combobox
@@ -55,6 +49,7 @@ function setActiveComp(comp) {
     </div>
   </header>
   <main>
-    <WeatherSummary v-if="dataPresent" :days />
+    <WeatherSummary v-if="dataPresent" :days :currentConditions/>
   </main>
+</div>
 </template>

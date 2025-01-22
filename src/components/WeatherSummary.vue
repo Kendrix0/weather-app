@@ -4,21 +4,35 @@ import { ref } from 'vue'
 </script>
 <script setup>
 const props = defineProps({
-    days: Array
+    days: Array,
+    currentConditions: Object
 });
 
+const tempUnit = ref(false)
 const weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; 
 const weekdayFull = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-const selectedDay = ref(props.days[0]);
+const selectedDay = ref(0);
+const conversion = ref(1);
+
+function setConversion(temp, convert) {
+  return convert ? ((temp - 32) / (1.8)) : temp
+};
+
 function setDay(num) {
-  selectedDay.value = props.days[num]
+  selectedDay.value = num
 }
 </script>
 
 <template>
   <div class="v-container v-locale--is-ltr">
-    <div class="v-row">
+    <div class="v-row d-flex justify-space-between">
       <h1>10-DAY FORECAST</h1>
+      <div class="d-flex align-center ga-2">°F<v-switch
+    color="primary"
+    v-model="tempUnit"
+    hide-details
+    inset
+  ></v-switch>°C</div>
     </div>
       <div class="v-row">
         <div class="v-col v-col-3">
@@ -36,7 +50,7 @@ function setDay(num) {
                 <span class="v-list-item__overlay"></span>
                 <div class="v-list-item__content" data-no-activator="">
                   <div class="v-list-item-title">{{ day == days[0] ? "Today" : weekdayFull[(new Date(day.datetime)).getDay()] }}</div>
-                  <div class="v-list-item-subtitle">{{ day.tempmin }} - {{ day.tempmax }}</div>
+                  <div class="v-list-item-subtitle">{{ Math.round(setConversion(day.tempmin,tempUnit)) }}° - {{ Math.round(setConversion(day.tempmax,tempUnit)) }}°</div>
                 </div>
               </div>
             </div>
@@ -44,10 +58,11 @@ function setDay(num) {
         </div>
           <div class="v-col">
           <div class="v-sheet rounded-lg" style="min-height: 70vh; padding: 3%;">
-            <h1>{{ weekdayFull[(new Date(selectedDay.datetime)).getDay()] }}</h1>
-            <div>Currently: {{ selectedDay.temp }}</div>
-            <div>{{ selectedDay.conditions }}</div>
-            <div>High: {{ selectedDay.tempmax }} Low: {{ selectedDay.tempmin }}</div>
+            <h1 class="d-flex justify-space-between">{{ weekdayFull[(new Date(days[selectedDay].datetime)).getDay()] }}
+              <div v-if="selectedDay == 0">{{ `Currently: ${Math.round(setConversion(currentConditions.temp,tempUnit))}` }}°</div></h1>
+            <h2>{{ days[selectedDay].conditions }}</h2>
+            <h2>High: {{ Math.round(setConversion(days[selectedDay].tempmax,tempUnit)) }}°</h2>
+            <h2>Low: {{ Math.round(setConversion(days[selectedDay].tempmin,tempUnit)) }}°</h2>
             <div></div>
           </div>
         </div>
