@@ -45,11 +45,29 @@ async function requestWeatherData() {
         width="25vw"
         v-model="location"
       ></v-combobox>
-      <button @click="requestWeatherData">Submit</button>
+      <button class="pb-5 ps-2" @click="requestWeatherData">Submit</button>
     </div>
   </header>
   <main>
-    <WeatherSummary v-if="dataPresent" :days :currentConditions/>
+    <Transition name="slide-fade">
+      <WeatherSummary v-if="dataPresent" :key="days" :days :currentConditions/>
+    </Transition>
   </main>
 </div>
 </template>
+
+<style>
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  display: none;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(20px);
+  opacity: 0;
+}
+</style>

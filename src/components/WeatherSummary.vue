@@ -8,11 +8,10 @@ const props = defineProps({
     currentConditions: Object
 });
 
-const tempUnit = ref(false)
+const tempUnit = ref(false);
 const weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; 
 const weekdayFull = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const selectedDay = ref(0);
-const conversion = ref(1);
 
 function setConversion(temp, convert) {
   return convert ? ((temp - 32) / (1.8)) : temp
@@ -20,7 +19,7 @@ function setConversion(temp, convert) {
 
 function setDay(num) {
   selectedDay.value = num
-}
+};
 </script>
 
 <template>
@@ -35,7 +34,7 @@ function setDay(num) {
   ></v-switch>°C</div>
     </div>
       <div class="v-row">
-        <div class="v-col v-col-3">
+          <div class="v-col v-col-3">
           <div class="v-sheet rounded-lg">
             <div
               class="v-list v-list--density-default v-list--one-line rounded-lg"
@@ -56,16 +55,23 @@ function setDay(num) {
             </div>
           </div>
         </div>
-          <div class="v-col">
+        <TransitionGroup name="slide-fade">
+        <div class="v-col" :key="selectedDay">
           <div class="v-sheet rounded-lg" style="min-height: 70vh; padding: 3%;">
-            <h1 class="d-flex justify-space-between">{{ weekdayFull[(new Date(days[selectedDay].datetime)).getDay()] }}
-              <div v-if="selectedDay == 0">{{ `Currently: ${Math.round(setConversion(currentConditions.temp,tempUnit))}` }}°</div></h1>
+            <div class="d-flex justify-space-between">
+              <h1 class="mb-6">{{ weekdayFull[(new Date(days[selectedDay].datetime)).getDay()] }}</h1>
+              <div v-if="selectedDay == 0">
+                <h1>{{ `Currently: ${Math.round(setConversion(currentConditions.temp,tempUnit))}` }}°</h1>
+                <div>{{ `Feels Like: ${Math.round(setConversion(currentConditions.feelslike,tempUnit))}` }}°</div>
+              </div>
+            </div>
             <h2>{{ days[selectedDay].conditions }}</h2>
             <h2>High: {{ Math.round(setConversion(days[selectedDay].tempmax,tempUnit)) }}°</h2>
             <h2>Low: {{ Math.round(setConversion(days[selectedDay].tempmin,tempUnit)) }}°</h2>
             <div></div>
           </div>
         </div>
+        </TransitionGroup>
       </div>
     </div>
 
@@ -74,5 +80,19 @@ function setDay(num) {
 <style>
 ul {
     list-style: none;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  display: none;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(20px);
+  opacity: 0;
 }
 </style>
