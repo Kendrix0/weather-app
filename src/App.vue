@@ -20,7 +20,7 @@ endDate = new Date(endDate).toISOString().substring(0, 10)
 async function requestWeatherData() {
   try {
     let response = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location.value}/${startDate}/${endDate}?key=${APIkey.value}&include=current`
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location.value}/${startDate}/${endDate}?key=${APIkey.value}&include=current,hours`
     )
     weatherData.value = await response.json()
     currentConditions.value = weatherData.value.currentConditions;
@@ -69,6 +69,4 @@ async function requestWeatherData() {
   transform: translateY(20px);
   opacity: 0;
 }
-
-@import './assets/svgStyles.css';
 </style>

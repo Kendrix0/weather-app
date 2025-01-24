@@ -18,17 +18,36 @@ const props = defineProps({
   days: Array,
   currentConditions: Object,
 })
+
 const icons = {'snow':snow, 'rain':rain, 'fog':fog, 'wind':wind, 'hail':hail, 'cloudy':cloudy, 'partly-cloudy-day':partlyCloudyDay, 'partly-cloudy-night':partlyCloudyNight, 'clear-day':clearDay, 'clear-night':clearNight}
+const graphGradient = ['#f72047', '#ffd200', '#1feaea'];
+const timeLabels = ['12am',' ',' ','3am',' ',' ','6am',' ',' ','9am',' ',' ','12pm',' ',' ','3pm',' ',' ','6pm',' ',' ','9pm',' ',' ']
+
 const tempUnit = ref(false)
 const weekdayFull = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const selectedDay = ref(0)
-
+const hoursTemp = ref(initializeSparkline());
 function setConversion(temp, convert) {
   return convert ? (temp - 32) / 1.8 : temp
 }
 
 function setDay(num) {
   selectedDay.value = num
+}
+
+function initializeSparkline() {
+  let temperatures = [];
+  for (let hour of props.days[0].hours) {
+    temperatures.push(hour.temp)
+  }
+  return temperatures
+}
+
+function setHoursTemp(day) {
+  hoursTemp.value = [];
+  for (let hour of day.hours) {
+    hoursTemp.value.push(hour.temp)
+  }
 }
 </script>
 
@@ -42,7 +61,7 @@ function setDay(num) {
     </v-row>
     <v-row>
       <v-col class="v-col-3">
-        <v-sheet class="rounded-lg">
+        <v-sheet class="rounded-lg" style="min-height: 70vh; padding: 3%">
           <v-list
             class="rounded-lg"
             tabindex="0"
@@ -53,18 +72,18 @@ function setDay(num) {
               :key="day.datetime"
               class="border-t border-b"
               tabindex="-2"
-              @click="setDay(days.indexOf(day))"
+              @click="setDay(days.indexOf(day)),setHoursTemp(day)"
             >
               <div class="v-list-item__content d-flex justify-space-between">
-                <div>
-                <div class="v-list-item-title">
-                  {{ day == days[0] ? 'Today' : weekdayFull[new Date(day.datetime).getDay()] }}
+                <div class="w-100">
+                  <div class="v-list-item-title">
+                    {{ day == days[0] ? 'Today' : weekdayFull[new Date(day.datetime).getDay()] }}
+                  </div>
+                  <div class="v-list-item-subtitle">
+                    {{ Math.round(setConversion(day.tempmin, tempUnit)) }}° -
+                    {{ Math.round(setConversion(day.tempmax, tempUnit)) }}°
+                  </div>
                 </div>
-                <div class="v-list-item-subtitle">
-                  {{ Math.round(setConversion(day.tempmin, tempUnit)) }}° -
-                  {{ Math.round(setConversion(day.tempmax, tempUnit)) }}°
-                </div>
-              </div>
                 <component class="icon" v-if="icons[day.icon]" :is="icons[day.icon]"/>
               </div>
             </v-list-item>
@@ -90,10 +109,24 @@ function setDay(num) {
               </div>
               <div v-else>Current data not available.</div>
             </div>
-            <h2 class="d-flex ga-2"><component class="big-icon" v-if="icons[days[selectedDay].icon]" :is="icons[days[selectedDay].icon]"/><div>{{ days[selectedDay].conditions }}</div></h2>
+            <h2 class="d-flex ga-2 align-center">
+              <component class="big-icon" v-if="icons[days[selectedDay].icon]" :is="icons[days[selectedDay].icon]"/>
+              <div>{{ days[selectedDay].conditions }}</div>
+            </h2>
             <h2>High: {{ Math.round(setConversion(days[selectedDay].tempmax, tempUnit)) }}°</h2>
             <h2>Low: {{ Math.round(setConversion(days[selectedDay].tempmin, tempUnit)) }}°</h2>
-            <div></div>
+            <v-sparkline
+          :model-value="hoursTemp"
+          color="rgba(255, 255, 255, 1)"
+          height="100"
+          padding="4"
+          :line-width="0"
+          :gradient="graphGradient"
+          :labels="timeLabels"
+          stroke-linecap="round"
+          smooth
+          fill="fill"
+        ></v-sparkline>
           </v-sheet>
         </v-col>
       </TransitionGroup>
@@ -105,7 +138,7 @@ function setDay(num) {
 @import '../assets/svgStyles.css';
 
 .big-icon {
-  max-width: 50px;
+  max-width: 80px;
 }
 
 .icon {
