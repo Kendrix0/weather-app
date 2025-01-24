@@ -10,7 +10,6 @@ const APIkey = ref('FMNUWVMF27AJNG8P9WAECF8RS')
 const days = ref([])
 const currentConditions = ref({})
 const dataPresent = ref(false)
-const displayedComp = ref('')
 let startDate = new Date()
 let endDate = new Date()
 
@@ -36,7 +35,7 @@ async function requestWeatherData() {
 
 <template>
 <div class="h-screen d-flex flex-column justify-center">
-  <header class="d-flex justify-center align-center mt-10">
+  <header class="d-flex justify-center align-center">
     <div class="d-flex ga-md-2">
       <v-combobox
         label="Enter Location"
@@ -70,4 +69,6 @@ async function requestWeatherData() {
   transform: translateY(20px);
   opacity: 0;
 }
+
+@import './assets/svgStyles.css';
 </style>
