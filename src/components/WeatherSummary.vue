@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/max-attributes-per-line -->
 <script type="module">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import clearDay from './icons/clear-day.vue';
 import clearNight from './icons/clear-night.vue';
 import cloudy from './icons/cloudy.vue';
@@ -20,13 +20,29 @@ const props = defineProps({
 })
 
 const icons = {'snow':snow, 'rain':rain, 'fog':fog, 'wind':wind, 'hail':hail, 'cloudy':cloudy, 'partly-cloudy-day':partlyCloudyDay, 'partly-cloudy-night':partlyCloudyNight, 'clear-day':clearDay, 'clear-night':clearNight}
-const graphGradient = ['#f72047', '#ffd200', '#1feaea'];
+const tempGradient = ['#f72047', '#ffd200', '#1feaea'];
 const timeLabels = ['12am',' ',' ','3am',' ',' ','6am',' ',' ','9am',' ',' ','12pm',' ',' ','3pm',' ',' ','6pm',' ',' ','9pm',' ',' ']
 
 const tempUnit = ref(false)
 const weekdayFull = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const selectedDay = ref(0)
-const hoursTemp = ref(initializeSparkline());
+
+const hourTemps = computed(() => {
+  let temperatures = [];
+  for (let hour of props.days[selectedDay.value].hours) {
+    temperatures.push(hour.temp)
+  }
+  return temperatures
+})
+
+const hourPrecips = computed(() => {
+  let precipprobs = [];
+  for (let hour of props.days[selectedDay.value].hours) {
+    precipprobs.push(hour.precipprob)
+  }
+  return precipprobs
+})
+
 function setConversion(temp, convert) {
   return convert ? (temp - 32) / 1.8 : temp
 }
@@ -35,20 +51,6 @@ function setDay(num) {
   selectedDay.value = num
 }
 
-function initializeSparkline() {
-  let temperatures = [];
-  for (let hour of props.days[0].hours) {
-    temperatures.push(hour.temp)
-  }
-  return temperatures
-}
-
-function setHoursTemp(day) {
-  hoursTemp.value = [];
-  for (let hour of day.hours) {
-    hoursTemp.value.push(hour.temp)
-  }
-}
 </script>
 
 <template>
@@ -60,8 +62,8 @@ function setHoursTemp(day) {
       </div>
     </v-row>
     <v-row>
-      <v-col class="v-col-3">
-        <v-sheet class="rounded-lg" style="min-height: 70vh; padding: 3%">
+      <v-col class="v-col-3" style="min-width: 180px;">
+        <v-sheet class="rounded-lg" style="min-height: 60vh; padding: 3%">
           <v-list
             class="rounded-lg"
             tabindex="0"
@@ -72,7 +74,7 @@ function setHoursTemp(day) {
               :key="day.datetime"
               class="border-t border-b"
               tabindex="-2"
-              @click="setDay(days.indexOf(day)),setHoursTemp(day)"
+              @click="setDay(days.indexOf(day))"
             >
               <div class="v-list-item__content d-flex justify-space-between">
                 <div class="w-100">
@@ -92,7 +94,7 @@ function setHoursTemp(day) {
       </v-col>
       <TransitionGroup name="slide-fade">
         <v-col :key="selectedDay">
-          <v-sheet class="rounded-lg" style="min-height: 70vh; padding: 3%">
+          <v-sheet class="rounded-lg" style="min-height: 60vh; padding: 3%">
             <div class="d-flex justify-space-between">
               <h1 class="mb-6">{{ weekdayFull[new Date(days[selectedDay].datetime).getDay()] }}</h1>
               <div v-if="selectedDay == 0 && !!currentConditions">
@@ -116,12 +118,12 @@ function setHoursTemp(day) {
             <h2>High: {{ Math.round(setConversion(days[selectedDay].tempmax, tempUnit)) }}°</h2>
             <h2>Low: {{ Math.round(setConversion(days[selectedDay].tempmin, tempUnit)) }}°</h2>
             <v-sparkline
-          :model-value="hoursTemp"
+          :model-value="hourTemps"
           color="rgba(255, 255, 255, 1)"
-          height="100"
+          height="80"
           padding="4"
           :line-width="0"
-          :gradient="graphGradient"
+          :gradient="tempGradient"
           :labels="timeLabels"
           stroke-linecap="round"
           smooth

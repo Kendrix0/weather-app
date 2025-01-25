@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 </script>
 <script setup>
+import { en } from 'vuetify/locale';
 import WeatherSummary from './components/WeatherSummary.vue'
 
 const location = ref('')
@@ -12,10 +13,24 @@ const currentConditions = ref({})
 const dataPresent = ref(false)
 let startDate = new Date()
 let endDate = new Date()
-
 endDate = endDate.setDate(endDate.getDate() + 9)
-startDate = startDate.toISOString().substring(0, 10)
-endDate = new Date(endDate).toISOString().substring(0, 10)
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+startDate = formatDate(startDate)
+endDate = formatDate(endDate)
 
 async function requestWeatherData() {
   try {
