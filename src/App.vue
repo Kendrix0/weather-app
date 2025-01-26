@@ -10,6 +10,7 @@ const weatherData = ref('')
 const APIkey = ref('FMNUWVMF27AJNG8P9WAECF8RS')
 const days = ref([])
 const currentConditions = ref({})
+const locationError = ref(false)
 const dataPresent = ref(false)
 let startDate = new Date()
 let endDate = new Date()
@@ -38,39 +39,50 @@ async function requestWeatherData() {
       `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location.value}/${startDate}/${endDate}?key=${APIkey.value}&include=current,hours`
     )
     weatherData.value = await response.json()
+    locationError.value = false
     currentConditions.value = weatherData.value.currentConditions;
     days.value = weatherData.value.days
     console.log(weatherData.value)
     dataPresent.value = !!days.value
   } catch (err) {
-    console.log(err)
+    locationError.value = true;
   }
 }
 </script>
 
 <template>
 <div class="h-screen d-flex flex-column justify-center">
-  <header class="d-flex justify-center align-center">
-    <div class="d-flex ga-md-2">
-      <v-combobox
+  <header class="d-flex justify-center align-center flex-column">
+    <div>
+        <div class="d-flex ga-md-2">
+          <v-combobox
         label="Enter Location"
         :items="['Athens', 'Dallas', 'Little Rock', 'Madrid', 'Philadelphia']"
         variant="outlined"
         width="25vw"
+        hide-details="true"
         v-model="location"
+        :error="locationError"
       ></v-combobox>
-      <button class="pb-5 ps-2" @click="requestWeatherData">Submit</button>
+      <button class="ps-2" @click="requestWeatherData">Submit</button>
+        </div>
+      <div v-if="locationError" class="error">Location not found!</div>
     </div>
+
   </header>
   <main>
     <Transition name="slide-fade">
-      <WeatherSummary v-if="dataPresent" :key="days" :days :currentConditions/>
+      <WeatherSummary v-if="dataPresent" :key="days" :weatherData/>
     </Transition>
   </main>
 </div>
 </template>
 
 <style>
+.error {
+  color: rgb(207,102,121);
+}
+
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
 }

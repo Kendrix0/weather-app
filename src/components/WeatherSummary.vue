@@ -15,10 +15,11 @@ import wind from './icons/wind.vue';
 </script>
 <script setup>
 const props = defineProps({
-  days: Array,
-  currentConditions: Object,
+  weatherData: Object,
 })
 
+const days = ref(props.weatherData.days)
+const currentConditions = ref(props.weatherData.currentConditions)
 const icons = {'snow':snow, 'rain':rain, 'fog':fog, 'wind':wind, 'hail':hail, 'cloudy':cloudy, 'partly-cloudy-day':partlyCloudyDay, 'partly-cloudy-night':partlyCloudyNight, 'clear-day':clearDay, 'clear-night':clearNight}
 const tempGradient = ['#f72047', '#ffd200', '#1feaea'];
 const timeLabels = ['12am',' ',' ','3am',' ',' ','6am',' ',' ','9am',' ',' ','12pm',' ',' ','3pm',' ',' ','6pm',' ',' ','9pm',' ',' ']
@@ -29,7 +30,7 @@ const selectedDay = ref(0)
 
 const hourTemps = computed(() => {
   let temperatures = [];
-  for (let hour of props.days[selectedDay.value].hours) {
+  for (let hour of days.value[selectedDay.value].hours) {
     temperatures.push(hour.temp)
   }
   return temperatures
@@ -37,7 +38,7 @@ const hourTemps = computed(() => {
 
 const hourPrecips = computed(() => {
   let precipprobs = [];
-  for (let hour of props.days[selectedDay.value].hours) {
+  for (let hour of days.value[selectedDay.value].hours) {
     precipprobs.push(hour.precipprob)
   }
   return precipprobs
@@ -55,14 +56,18 @@ function setDay(num) {
 
 <template>
   <v-container>
-    <v-row class="d-flex justify-space-between">
-      <h1>10-DAY FORECAST</h1>
+    <v-row>
+      <v-col class="d-flex justify-space-between">
+      <h1>{{ weatherData.resolvedAddress }}</h1>
       <div class="d-flex align-center ga-2">
         °F<v-switch color="primary" v-model="tempUnit" hide-details inset></v-switch>°C
       </div>
+    </v-col>
     </v-row>
+
     <v-row>
       <v-col class="v-col-3" style="min-width: 180px;">
+        <h1>10 - DAY</h1>
         <v-sheet class="rounded-lg" style="min-height: 60vh; padding: 3%">
           <v-list
             class="rounded-lg"
@@ -94,6 +99,7 @@ function setDay(num) {
       </v-col>
       <TransitionGroup name="slide-fade">
         <v-col :key="selectedDay">
+          <h1>FORECAST</h1>
           <v-sheet class="rounded-lg" style="min-height: 60vh; padding: 3%">
             <div class="d-flex justify-space-between">
               <h1 class="mb-6">{{ weekdayFull[new Date(days[selectedDay].datetime).getDay()] }}</h1>
