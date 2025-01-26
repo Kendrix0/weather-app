@@ -57,6 +57,7 @@ async function requestWeatherData() {
         <div class="d-flex ga-md-2">
           <v-combobox
         label="Enter Location"
+        bg-color="grey-darken-4"
         :items="['Athens', 'Dallas', 'Little Rock', 'Madrid', 'Philadelphia']"
         variant="outlined"
         width="25vw"
@@ -64,7 +65,7 @@ async function requestWeatherData() {
         v-model="location"
         :error="locationError"
       ></v-combobox>
-      <button class="ps-2" @click="requestWeatherData">Submit</button>
+      <v-btn class="ps-2" height="60" color="indigo-darken-3" @click="requestWeatherData" >Submit</v-btn>
         </div>
       <div v-if="locationError" class="error">Location not found!</div>
     </div>
