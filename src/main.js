@@ -13,9 +13,11 @@ import App from './App.vue'
 // Composables
 import { createApp } from 'vue'
 import 'vuetify/dist/vuetify.min.css'
+import VueApexCharts from 'vue3-apexcharts';
 
-const app = createApp(App)
+const app = createApp(App);
 
 registerPlugins(app)
 
 app.mount('#app')
+app.use(VueApexCharts);

@@ -52,9 +52,9 @@ async function requestWeatherData() {
 
 <template>
 <div class="h-screen d-flex flex-column justify-center">
-  <header class="d-flex justify-center align-center flex-column">
+  <header class="d-flex justify-center align-center flex-column mt-10">
     <div>
-        <div class="d-flex ga-md-2">
+        <div class="d-flex">
           <v-combobox
         label="Enter Location"
         bg-color="grey-darken-4"

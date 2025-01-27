@@ -31,53 +31,10 @@ const icons = {
   'clear-day': clearDay,
   'clear-night': clearNight,
 }
-const tempGradient = ['#f72047', '#ffd200', '#1feaea']
-const timeLabels = [
-  '12am',
-  ' ',
-  ' ',
-  '3am',
-  ' ',
-  ' ',
-  '6am',
-  ' ',
-  ' ',
-  '9am',
-  ' ',
-  ' ',
-  '12pm',
-  ' ',
-  ' ',
-  '3pm',
-  ' ',
-  ' ',
-  '6pm',
-  ' ',
-  ' ',
-  '9pm',
-  ' ',
-  ' ',
-]
 
 const tempUnit = ref(false)
 const weekdayFull = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const selectedDay = ref(0)
-
-const hourTemps = computed(() => {
-  let temperatures = []
-  for (let hour of days.value[selectedDay.value].hours) {
-    temperatures.push(hour.temp)
-  }
-  return temperatures
-})
-
-const hourPrecips = computed(() => {
-  let precipprobs = []
-  for (let hour of days.value[selectedDay.value].hours) {
-    precipprobs.push(hour.precipprob)
-  }
-  return precipprobs
-})
 
 function setConversion(temp, convert) {
   return convert ? (temp - 32) / 1.8 : temp
@@ -90,7 +47,7 @@ function setDay(num) {
 
 <template>
   <v-container>
-    <v-sheet class="pa-5 rounded-xl" color="blue-grey-darken-4">
+    <v-sheet class="pa-5 rounded-xl" style="background-color: rgb(66, 66, 66);">
       <v-row>
         <v-col class="d-flex justify-space-between">
           <h1>{{ weatherData.resolvedAddress }}</h1>
@@ -104,7 +61,7 @@ function setDay(num) {
         <v-col class="v-col-3" style="min-width: 180px">
           <h1>FORECAST</h1>
           <v-sheet class="rounded-lg">
-            <v-list class="rounded-lg" role="listbox" activatable="true" bg-color="blue-grey-darken-4" >
+            <v-list class="rounded-lg" role="listbox" style="background-color: rgb(66, 66, 66);" >
               <v-list-item
                 v-for="day in days"
                 :key="day.datetime"
@@ -121,7 +78,7 @@ function setDay(num) {
         <v-divider vertical></v-divider>
         <v-col>
           <TransitionGroup name="slide-fade">
-            <v-sheet :key="selectedDay" class="rounded-lg pa-0" style="min-height: 60vh; padding: 3%" color="blue-grey-darken-4">
+            <v-sheet :key="selectedDay" class="rounded-lg pa-0" style="min-height: 60vh; padding: 3%; background-color: rgb(66, 66, 66);">
               <div class="d-flex justify-space-between">
                 <h1 class="mb-6">
                   {{ weekdayFull[new Date(days[selectedDay].datetime).getDay()] }}
@@ -152,18 +109,10 @@ function setDay(num) {
               </h2>
               <h2>High: {{ Math.round(setConversion(days[selectedDay].tempmax, tempUnit)) }}°</h2>
               <h2>Low: {{ Math.round(setConversion(days[selectedDay].tempmin, tempUnit)) }}°</h2>
-              <v-sparkline
-                :model-value="hourTemps"
-                color="rgba(255, 255, 255, 1)"
-                height="80"
-                padding="4"
-                :line-width="0"
-                :gradient="tempGradient"
-                :labels="timeLabels"
-                stroke-linecap="round"
-                smooth
-                fill="fill"
-              ></v-sparkline>
+              <div class="d-flex justify-center">
+                <ApexChart v-if="tempUnit" :days :selectedDay :tempUnit style="width: 85%;"></ApexChart>
+                <ApexChart v-else :days :selectedDay :tempUnit style="width: 85%;"></ApexChart>
+              </div>
             </v-sheet>
           </TransitionGroup>
         </v-col>
